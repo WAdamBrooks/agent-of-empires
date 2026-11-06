@@ -104,6 +104,10 @@ Session creation resets client-controlled spawn fields, including `command_overr
 
 Settings expose Theme without color-mode or idle-decay controls, field-filtered trash settings, Telemetry, and display-only MCP servers and Plugins. Other settings and profile switching stay unavailable. The mode persists in `serve.launch` across `--restart` and post-update re-exec.
 
+#### The CityHall proxy secret
+
+In CityHall mode, set `AOE_CITYHALL_PROXY_TOKEN` and aoe requires it, as `X-CityHall-Proxy-Token`, on every request from a non-loopback peer; anything else gets `401 proxy_auth_required`. Requests from the workspace's own loopback do not need it. A request that carries the secret from a private network address (loopback, link-local, RFC 1918 or unique-local, or 100.64.0.0/10) is treated as coming from a trusted proxy: its forwarded client address is believed and plain HTTP over that hop is accepted, because CityHall terminates end-user TLS. The same secret from a public address changes nothing, so plain HTTP from there still gets `426 tls_required` and the secret is never sent in the clear across an open network. A missing, repeated or empty header never authenticates. Without `--cityhall`, the variable is ignored.
+
 #### The CityHall config bundle
 
 A bundle configures a locked-down client with one TOML document:

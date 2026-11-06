@@ -162,6 +162,11 @@ pub struct AppState {
     pub trust_cf_header: bool,
     /// Per-bind opt-out of the 426 plaintext-remote gate (`--dangerously-allow-plaintext-remote`).
     pub allow_plaintext_remote: bool,
+    /// Secret a CityHall proxy presents (`X-CityHall-Proxy-Token`) to be recognised as the
+    /// workspace's one trusted front door. Set from `AOE_CITYHALL_PROXY_TOKEN`, and only in
+    /// CityHall mode. When set, every request from a non-loopback peer must carry it. See
+    /// `ingress`.
+    pub cityhall_proxy_token: Option<Arc<str>>,
     /// Coarse auth mode resolved once at launch (`"token"` / `"passphrase"` /
     /// `"none"`). `/api/about` and the opt-in telemetry snapshot both read this
     /// single value rather than re-deriving it; immutable for the daemon's

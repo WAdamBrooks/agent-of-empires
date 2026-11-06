@@ -940,6 +940,12 @@ pub(crate) async fn start_server(
             .as_ref()
             .is_some_and(tunnel::TunnelHandle::sets_cf_connecting_ip),
         allow_plaintext_remote,
+        cityhall_proxy_token: cityhall_mode
+            .then(|| std::env::var("AOE_CITYHALL_PROXY_TOKEN").ok())
+            .flatten()
+            .map(|t| t.trim().to_string())
+            .filter(|t| !t.is_empty())
+            .map(Arc::from),
         auth_mode,
         serve_mode,
         allowed_hosts,

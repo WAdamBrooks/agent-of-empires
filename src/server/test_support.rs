@@ -158,6 +158,23 @@ pub fn build_test_app_state_ingress(
     )
 }
 
+/// A state for CityHall-proxy tests: behind a proxy, the plaintext-remote gate on, and the
+/// workspace's shared proxy secret set to `proxy_token`.
+pub fn build_test_app_state_cityhall_proxy(proxy_token: &str) -> Arc<AppState> {
+    build_test_app_state_with_policy_configured(
+        Vec::new(),
+        vec!["localhost".to_string()],
+        vec!["http://localhost:8080".to_string()],
+        None,
+        |state| {
+            state.behind_tunnel = true;
+            state.trust_cf_header = false;
+            state.allow_plaintext_remote = false;
+            state.cityhall_proxy_token = Some(Arc::from(proxy_token));
+        },
+    )
+}
+
 /// Like [`build_test_app_state`] but every worker start goes through
 /// `launcher`, so a test decides how a start ends.
 #[cfg(test)]
@@ -285,6 +302,7 @@ pub(crate) fn build_test_app_state_impl_with_event_store(
         trust_cf_header: false,
         // Handler tests drive requests from arbitrary peers; the 426 gate has its own tests.
         allow_plaintext_remote: true,
+        cityhall_proxy_token: None,
         auth_mode: "none",
         serve_mode: "local",
         allowed_hosts,
